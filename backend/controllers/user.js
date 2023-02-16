@@ -20,6 +20,7 @@ module.exports.postUser = async( req,res,next)=>{
         }
         const user=await User.findOne({where:{email:email}})
         if(user){
+            alert("user already exists")
             return res.status(400).json({message:'user alredy exists >>>please try Login'})
         }
         const saltrounds =10;
