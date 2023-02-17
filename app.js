@@ -12,8 +12,10 @@ const userR =require('./backend/routes/userroutes');
 const app = express();
 
 app.use(cors({
-    origin:'http://127.0.0.1:3000'
-}));
+    origin: '*',
+    credentials: true
+}))
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 

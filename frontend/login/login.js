@@ -1,18 +1,27 @@
-async function login(e){
+function loginfun(e){
+    e.preventDefault();
+    const logInDetails={
+        email:e.target.email.value,
+        password: e.target.password.value
+    }
+    datafetch(logInDetails);
+
+}
+
+
+async function datafetch(logInDetails){
     try{
-        e.preventDefault();
-        const logInDetails={
-            email:e.target.email.value,
-            password: e.target.password.value
-        }
-        console.log(logInDetails);
-        const response = await axios.post('http://localhost:3000/user/login',logInDetails)
-        if(response.status ===200){
-            localStorage.setItem('token',response.data.token)
-            //window.location.href="../chat-window/chat-window.html"
+        const loginres = await axios.post('http://localhost:3000/user/login',logInDetails)
+        //console.log(loginres,'imp');
+        if(loginres.status === 200){
+            alert('login successful')
+            localStorage.setItem('username',loginres.data.data.name);
+            localStorage.setItem('token',loginres.data.token)
+            
+            window.location.href="../main/main.html"
         }
     }
     catch(err){
-        document.body.innerHTML=`<div style='color:red;'>${err}</div>`
+        console.log(err);
     }
 }

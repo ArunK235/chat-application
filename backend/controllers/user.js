@@ -20,7 +20,7 @@ module.exports.postUser = async( req,res,next)=>{
         }
         const user=await User.findOne({where:{email:email}})
         if(user){
-            alert("user already exists")
+            
             return res.status(400).json({message:'user alredy exists >>>please try Login'})
         }
         const saltrounds =10;
@@ -40,8 +40,8 @@ module.exports.postUser = async( req,res,next)=>{
     }
 }
 
-function generateToken(id,name){
-    return jwt.sign({userId : id, name:name},  process.env.TOKEN)
+function generateToken  (id,name){
+    return jwt.sign({userId : id, name:name}, "secretkey" )
 }
 
 module.exports.getUser= async(req,res,next)=>{
@@ -68,6 +68,8 @@ module.exports.getUser= async(req,res,next)=>{
         else{
             return res.status(404).json({success: false, message: 'User does not exist'})
         }
+    
+        
     }
     catch(err){
         console.log(err);
