@@ -9,7 +9,7 @@ async function login(e){
         const response = await axios.post('http://localhost:3000/user/login',logInDetails)
         if(response.status ===200){
             localStorage.setItem('token',response.data.token)
-            window.location.href="../chat-window/chat-window.html"
+            //window.location.href="../chat-window/chat-window.html"
         }
     }
     catch(err){
