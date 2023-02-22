@@ -4,10 +4,12 @@ let cors = require('cors')
 const bodyParser= require('body-parser')
 
 const user=require('./backend/models/user');
+const messages = require('./backend/models/message')
 
 const db=require('./backend/util/database');
 
 const userR =require('./backend/routes/userroutes');
+const messagesR = require('./backend/routes/messageroutes');
 
 const app = express();
 
@@ -22,6 +24,11 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 
 app.use('/user',userR);
+app.use('/message',messagesR);
+
+
+user.hasMany(messages)
+messages.belongsTo(user)
 
 db.sync({})
 .then().catch((err)=>{

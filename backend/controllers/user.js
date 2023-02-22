@@ -40,32 +40,38 @@ module.exports.postUser = async( req,res,next)=>{
     }
 }
 
-function generateToken  (id,name){
-    return jwt.sign({userId : id, name:name}, "secretkey" )
+function generateToken  (id){
+    return jwt.sign({userId : id}, "secretkey" )
 }
 
 module.exports.getUser= async(req,res,next)=>{
     try{
         const {email,password}=req.body;
+        console.log(email,password,'email password');
         if( stringvalid(email)|| stringvalid(password)){
             res.status(500).json({message: 'something missing'})
         }
-        const user = await User.findAll({ where: { email } })
-        if(user.length > 0){
-            bcrypt.compare(password, user[0].password , (err, result)=>{
+        const user = await User.findOne({ where: { email:email } })
+        const username = user.name
+        console.log(username,'imp')
+        if(user){
+            bcrypt.compare(password, user.password , (err, result)=>{
                 if(err){
                     throw new Error('something went wrong ')
                 }
                 else if(result === true)
                 {
-                    res.status(200).json({ success: true, message: "user successfully loged in", token: generateToken(user[0].id, user[0].name)})
+                    console.log('successfully')
+                    res.status(200).json({ success: true, message: "user successfully loged in",data:username, token: generateToken(user.id)})
                 }
                 else{
+                    console.log('failed');
                     return res.status(401).json({ success:false, message: " User not authorized"})
                 }
             })
         }
         else{
+            console.log('failed again')
             return res.status(404).json({success: false, message: 'User does not exist'})
         }
     

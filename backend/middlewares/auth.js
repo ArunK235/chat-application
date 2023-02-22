@@ -15,5 +15,6 @@ module.exports.Authenticate = (req,res,next)=>{
     }
     catch(err){
         console.log(err);
+        res.status(401).json({success:false,message:'failed at auth.js'})
     }
 }
