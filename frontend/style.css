@@ -30,3 +30,26 @@ input[type="text"] {
 a{
     color: aliceblue;
 }
+.chat-input{
+    margin: 10px auto;
+    width: 300px;
+    text-align: center;
+    color: aliceblue;
+}
+.message-container{
+    margin: 10px auto;
+    width: 300px;
+    text-align: center;
+    color: aliceblue;
+    font-size: 1.2rem;
+}
+.message-container-right{
+    text-align: right;
+    color: aliceblue;
+    font-size: 1.2rem;
+}
+.message-container-left{
+    text-align: left;
+    color: aliceblue;
+    font-size: 1.2rem;
+}

@@ -10,7 +10,9 @@ const Message=sequelize.define('message',{
     },
     messages:{
         type:Sequelize.STRING,
-        allowNull:false
+        allowNull:false,
+        
+    
     }
 })
 

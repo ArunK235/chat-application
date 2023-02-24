@@ -53,7 +53,7 @@ module.exports.getUser= async(req,res,next)=>{
         }
         const user = await User.findOne({ where: { email:email } })
         const username = user.name
-        console.log(username,'imp')
+        //console.log(username,'imp')
         if(user){
             bcrypt.compare(password, user.password , (err, result)=>{
                 if(err){
@@ -61,17 +61,17 @@ module.exports.getUser= async(req,res,next)=>{
                 }
                 else if(result === true)
                 {
-                    console.log('successfully')
+                    //console.log('successfully')
                     res.status(200).json({ success: true, message: "user successfully loged in",data:username, token: generateToken(user.id)})
                 }
                 else{
-                    console.log('failed');
+                    //console.log('failed');
                     return res.status(401).json({ success:false, message: " User not authorized"})
                 }
             })
         }
         else{
-            console.log('failed again')
+            //console.log('failed again')
             return res.status(404).json({success: false, message: 'User does not exist'})
         }
     
