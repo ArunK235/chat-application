@@ -3,7 +3,10 @@ document.addEventListener('DOMContentLoaded', async()=>{
     try{
         const userName = localStorage.getItem('username')
         userJoined(userName)
-        showMessages();
+        setInterval(() => {
+            showMessages();
+        }, 5000);
+        
     }
     catch(err){
         console.log(err)
@@ -45,6 +48,7 @@ async function chatButton(){
 }
 async function showMessages(){
     try{
+        document.getElementById('chat').innerHTML='';
         const allmessages = await axios.get('http://localhost:3000/message/toget');
         console.log(allmessages.data.message)
         const msgs = allmessages.data.message
