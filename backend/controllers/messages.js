@@ -5,7 +5,7 @@ module.exports.addMessage= async (req,res,next)=>{
     try{
         const userId = req.user.id;
         const {msg} = req.body;
-        console.log(userId,msg,'real');
+        //console.log(userId,msg,'real');
         await Messages.create({
             messages:msg,
             userId:userId
@@ -31,6 +31,30 @@ module.exports.getMessages = async(req,res)=>{
     catch(err){
         console.log(err);
         res.status(401).json({ message: 'failed to get messages' });
+    }
+}
+
+module.exports.getAllMessages= async(req,res)=>{
+    try{
+        const skipnumber = Number(req.query.id)
+        console.log(skipnumber)
+        if(skipnumber >= 10){
+            const skip= skipnumber-10
+            let offset = skip
+            const allMsgs= await Messages.findAll(
+                {attributes:['id','messages'],offset:offset,
+                include:[{model:User,attributes:['name']}]})
+                return res.status(200).json({message:allMsgs})
+        }
+        const allMsgs= await Messages.findAll(
+            {attributes:['id','messages'],
+            include:[{model:User,attributes:['name']}]})
+            return res.status(200).json({message:allMsgs})
+        
+
+    }
+    catch(err){
+        console.log(err);
     }
 }
 

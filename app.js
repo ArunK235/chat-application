@@ -30,7 +30,7 @@ app.use('/message',messagesR);
 user.hasMany(messages)
 messages.belongsTo(user)
 
-db.sync({alter:true})
+db.sync({})
 .then().catch((err)=>{
     console.log(err);
 })

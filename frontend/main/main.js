@@ -1,12 +1,14 @@
-
+let getallclicks = false;
+//console.log(getallclicks);
 document.addEventListener('DOMContentLoaded', async()=>{
     try{
         const userName = localStorage.getItem('username')
         userJoined(userName)
-        setInterval(() => {
-            showMessages();
-        }, 5000);
-        
+        if(!getallclicks){
+            setInterval(() => {
+                localmessages();
+            }, 5000);
+        }   
     }
     catch(err){
         console.log(err)
@@ -46,17 +48,76 @@ async function chatButton(){
     }
 
 }
-async function showMessages(){
+
+async function getAll(){
+    try{
+        getallclicks = true;
+        const allmessages = await axios.get('http://localhost:3000/message/toget');
+        //console.log(allmessages.data.message)
+        const msgs = allmessages.data.message
+        showMessages(msgs)
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+async function localmessages(){
+    if(!getallclicks){
+        try{
+            let beforedata = JSON.parse(localStorage.getItem('data')) ||[];
+            //console.log(beforedata);
+            let lastmsgid
+            if(beforedata.length !== 0){
+                lastmsgid = beforedata[beforedata.length-1].id
+                //console.log(lastmsgid);
+            }else{
+                lastmsgid=-1;
+            }
+            const localmsgs = await axios.get(`http://localhost:3000/message/localmsg?id=${lastmsgid}`)
+            //console.log(localmsgs.data.message);
+            let samedata = localmsgs.data.message
+
+            if((beforedata.length !==0) && (beforedata[beforedata.length-1].id === samedata[samedata.length-1].id)){
+                console.log(beforedata[beforedata.length-1].id, samedata[samedata.length-1].id )
+                let datalocal =JSON.parse(localStorage.getItem('data'))
+                return showMessages(datalocal);
+            }
+            let alllocalmessages
+            if(beforedata.length === 0){
+                alllocalmessages = localmsgs.data.message
+            }else{
+                alllocalmessages = [...beforedata,...localmsgs.data.message]
+            }
+            if(alllocalmessages.length>10){
+                const msgsafterdel =alllocalmessages.slice(alllocalmessages.length-10,alllocalmessages.length)
+                localStorage.setItem('data',JSON.stringify(msgsafterdel))
+            }else{
+                localStorage.setItem('data',JSON.stringify(alllocalmessages))
+            }
+            let datalocal = JSON.parse(localStorage.getItem('data'))
+            console.log(datalocal)
+            showMessages(datalocal);
+
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+}
+
+
+
+
+
+
+async function showMessages(msgs){
     try{
         document.getElementById('chat').innerHTML='';
-        const allmessages = await axios.get('http://localhost:3000/message/toget');
-        console.log(allmessages.data.message)
-        const msgs = allmessages.data.message
         const user= localStorage.getItem('username');
         msgs.forEach(data =>{
             let msgText = data.messages
             let userName= data.user.name
-            console.log(msgText,userName)
+            //console.log(msgText,userName)
 
             let newMessage = document.createElement("div");
 

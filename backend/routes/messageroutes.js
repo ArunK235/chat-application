@@ -8,4 +8,6 @@ router.post('/tostore',authenticatemsg.Authenticate, messagecontroller.addMessag
 
 router.get('/toget',messagecontroller.getMessages);
 
+router.get('/localmsg',messagecontroller.getAllMessages);
+
 module.exports =router
