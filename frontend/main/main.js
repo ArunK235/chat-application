@@ -1,14 +1,26 @@
+axios.defaults.headers.common["Authorization"] = localStorage.getItem("token")
+  ? localStorage.getItem("token")
+  : "";
+
 let getallclicks = false;
+
+const textarea = document.getElementById("textarea");
+  textarea.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      chatButton(event);
+    }
+  })
 //console.log(getallclicks);
 document.addEventListener('DOMContentLoaded', async()=>{
     try{
         const userName = localStorage.getItem('username')
         userJoined(userName)
-        if(!getallclicks){
+        /*if(!getallclicks){
             setInterval(() => {
                 localmessages();
             }, 5000);
-        }   
+        }*/
+        localmessages()   
     }
     catch(err){
         console.log(err)
@@ -29,10 +41,13 @@ async function chatButton(){
     try{
 
         const token = localStorage.getItem('token')
-
+        if(!token){
+            window.location = 'login.html'
+        }
         let textArea = document.querySelector("textarea");
         let msg = textArea.value;
-        const userName = localStorage.getItem('username')
+        textArea.value = ''
+        //const userName = localStorage.getItem('username')
         let newMessage = document.createElement("div");
         newMessage.classList.add("message-container-right");
         let messageText = document.createElement("p");
@@ -69,7 +84,7 @@ async function localmessages(){
             let lastmsgid
             if(beforedata.length !== 0){
                 lastmsgid = beforedata[beforedata.length-1].id
-                //console.log(lastmsgid);
+                console.log(lastmsgid);
             }else{
                 lastmsgid=-1;
             }
@@ -78,7 +93,8 @@ async function localmessages(){
             let samedata = localmsgs.data.message
 
             if((beforedata.length !==0) && (beforedata[beforedata.length-1].id === samedata[samedata.length-1].id)){
-                console.log(beforedata[beforedata.length-1].id, samedata[samedata.length-1].id )
+                //console.log(beforedata[beforedata.length-1].id, samedata[samedata.length-1].id )
+                //console.log(beforedata[beforedata.length-1].id-1, samedata[samedata.length-1].id,beforedata.length,samedata.length )
                 let datalocal =JSON.parse(localStorage.getItem('data'))
                 return showMessages(datalocal);
             }
@@ -87,6 +103,15 @@ async function localmessages(){
                 alllocalmessages = localmsgs.data.message
             }else{
                 alllocalmessages = [...beforedata,...localmsgs.data.message]
+                let uniqueid = new set();
+                alllocalmessages=alllocalmessages.filter(item =>{
+                    if(!uniqueid.has(item.id)){
+                        uniqueid.add(item.id)
+                        return true;
+                    }
+                    return false;
+                })
+                console.log(alllocalmessages)
             }
             if(alllocalmessages.length>10){
                 const msgsafterdel =alllocalmessages.slice(alllocalmessages.length-10,alllocalmessages.length)
@@ -104,11 +129,6 @@ async function localmessages(){
         }
     }
 }
-
-
-
-
-
 
 async function showMessages(msgs){
     try{
@@ -142,5 +162,28 @@ async function showMessages(msgs){
     }
     catch(err){
         console.log(err);
+    }
+}
+
+async function creategroup(){
+    try{
+        const parentelement = document.getElementById('group-list');
+        const groupname = prompt('please enter your groupname')
+        //console.log(groupname)
+        const creationgroup = await axios.post('http://localhost:3000/group/tocreate',{groupname})
+        console.log(creationgroup)
+        if(creationgroup.status === 201){
+            //console.log(creationgroup.data.message.Groupname)
+            let li= document.createElement('li')
+            let a= document.createElement('a');
+            a.href= `http://localhost:3000/group/${creationgroup.data.message.id}`
+            a.textContent =`${creationgroup.data.message.Groupname}`
+            li.appendChild(a)
+            parentelement.appendChild(li)
+        }
+               
+    }
+    catch(err){
+
     }
 }

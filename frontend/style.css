@@ -47,9 +47,45 @@ a{
     text-align: right;
     color: aliceblue;
     font-size: 1.2rem;
+    margin-right: 3%;
 }
 .message-container-left{
     text-align: left;
     color: aliceblue;
     font-size: 1.2rem;
+    margin-left: 3%;
 }
+.groups{
+    width: 20%;
+    padding: 20px;
+    background-color: #c29696;
+    height: 100%;
+    
+}
+.group-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+ }
+
+.group-list li {
+margin-bottom: 10px;
+}
+.group-list a{
+color:black
+}
+.groupbtn{
+    display: block;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #d6f1d6;
+    color: rgb(8, 8, 8);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.groupbtn:hover {
+    background-color: #3e8e41;
+  }
+

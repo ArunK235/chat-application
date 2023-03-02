@@ -62,6 +62,7 @@ module.exports.getUser= async(req,res,next)=>{
                 else if(result === true)
                 {
                     //console.log('successfully')
+                    res.set('authToken',generateToken(user.id))
                     res.status(200).json({ success: true, message: "user successfully loged in",data:username, token: generateToken(user.id)})
                 }
                 else{

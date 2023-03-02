@@ -12,6 +12,18 @@
         <div class="chat-header">
             <h1>Chat App</h1>
         </div>
+        <div class="groups">
+            <h2>Your Groups</h2>
+            <ul class="group-list" id="group-list">
+              <li><a href="#group1">Group 1</a></li>
+              <li><a href="#group2">Group 2</a></li>
+              <li><a href="#group3">Group 3</a></li>
+            </ul>
+            <button class="groupbtn" onclick="creategroup()">Create Group</button>
+        </div>
+        <div class="chat-headers">
+            <h3>New Group</h3>
+        </div>
         <div class="chat-messages" id="chat">
            <!--<div class="message-container">
             <p class="message-username">User 1:</p>
@@ -23,9 +35,9 @@
           </div> -->
         </div>
         <div class="chat-input">
-            <textarea placeholder="Type your messeges here" required></textarea>
+            <textarea placeholder="Type your messeges here" id="textarea"></textarea>
             <br><br>
-            <button onclick="chatButton(event)">Send</button>
+            <button onclick="chatButton(event)" >Send</button>
             <button onclick="getAll()">All Messages</button>
         </div>
     </div>
