@@ -13,16 +13,19 @@
             <h1>Chat App</h1>
         </div>
         <div class="groups">
+            <div>
+                <button id="public" onclick="switchGroup(1)">Common Room</button>
+            </div>
             <h2>Your Groups</h2>
             <ul class="group-list" id="group-list">
-              <li><a href="#group1">Group 1</a></li>
+              <!--li><a href="#group1">Group 1</a></li>
               <li><a href="#group2">Group 2</a></li>
-              <li><a href="#group3">Group 3</a></li>
+              <li><a href="#group3">Group 3</a></li-->
             </ul>
             <button class="groupbtn" onclick="creategroup()">Create Group</button>
         </div>
         <div class="chat-headers">
-            <h3>New Group</h3>
+            <h3 id="groupname">Common Room</h3>
         </div>
         <div class="chat-messages" id="chat">
            <!--<div class="message-container">
@@ -40,6 +43,10 @@
             <button onclick="chatButton(event)" >Send</button>
             <button onclick="getAll()">All Messages</button>
         </div>
+    </div>
+    <div id="invite-link-section" style="display: none">
+        <p>Invite Link: <span id="group-invite-link"></span></p>
+        <button id="copy-invite-link-btn">Copy Link</button>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
     <script src="./main.js"></script>

@@ -1,3 +1,5 @@
+localStorage.clear()
+
 function loginfun(e){
     e.preventDefault();
     const logInDetails={

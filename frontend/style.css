@@ -58,8 +58,8 @@ a{
 .groups{
     width: 20%;
     padding: 20px;
-    background-color: #c29696;
     height: 100%;
+    color: #d6f1d6;
     
 }
 .group-list {
@@ -73,7 +73,7 @@ a{
 margin-bottom: 10px;
 }
 .group-list a{
-color:black
+color:white
 }
 .groupbtn{
     display: block;
@@ -87,5 +87,40 @@ color:black
 }
 .groupbtn:hover {
     background-color: #3e8e41;
+}
+#public{
+    padding: 5px;
+    background-color: rgb(228, 235, 242);
+    border-radius: 5px;
+    border-color: rgb(151, 145, 145);
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.group-text {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000000;
+    background-color: #dddee7;
+    transition: background-color 0.3s ease;
+    font-size: 0.8rem;
   }
+
+  .group-text:hover {
+    background-color: #706c6c;
+  }
+
+  .invite{
+    margin-left: 2%;
+  }
+  .chat-headers{
+    color: aliceblue;
+
+  }
+#groupname{
+    text-align: center;
+}
 

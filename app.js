@@ -6,6 +6,7 @@ const bodyParser= require('body-parser')
 const user=require('./backend/models/user');
 const messages = require('./backend/models/message')
 const group = require('./backend/models/group');
+const userGroupData = require('./backend/models/usergroup')
 
 const db=require('./backend/util/database');
 
@@ -35,8 +36,8 @@ messages.belongsTo(user)
 group.hasMany(messages)
 messages.belongsTo(group)
 
-user.belongsToMany(group,{through:'usergroup'})
-group.belongsToMany(user,{through:'usergroup'})
+user.belongsToMany(group,{through:userGroupData})
+group.belongsToMany(user,{through:userGroupData})
 
 db.sync({})
 .then().catch((err)=>{
