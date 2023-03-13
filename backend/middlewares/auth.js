@@ -5,6 +5,9 @@ module.exports.Authenticate = (req,res,next)=>{
     try{
         const token= req.header('Authorization');
         //console.log(token);
+        if (!token) {
+            return res.status(401).json({success:false, message: 'No token provided'})
+        }
         const user=jwt.verify(token,'secretkey');
         //console.log(user.userId)
         User.findByPk(user.userId).then(user =>{

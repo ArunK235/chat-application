@@ -42,25 +42,39 @@ async function chatButton(){
     try{
 
         const token = localStorage.getItem('token')
+        //console.log(token,'token')
         if(!token){
             window.location = 'login.html'
         }
         let textArea = document.querySelector("textarea");
         let msg = textArea.value;
         textArea.value = ''
+
+        const groupId = localStorage.getItem("groupId")
+        ? localStorage.getItem("groupId")
+        :1 
+
         //const userName = localStorage.getItem('username')
         let newMessage = document.createElement("div");
         newMessage.classList.add("message-container-right");
         let messageText = document.createElement("p");
         messageText.classList.add("message-text");
-        messageText.innerText = `You:  ${msg}`;
+
+        if(msg.includes('http')){
+            let link=msg
+            await axios.post(`http://localhost:3000/message/tostore/${groupId}`,{msg:link},{ headers: { Authorization: token }})
+            messageText.innerHTML = `You : <a href="#" onclick="linkclicked(${groupId})">Join link</a>`
+        }
+        else{
+            await axios.post(`http://localhost:3000/message/tostore/${groupId}`,{msg},{ headers: { Authorization: token }})
+            messageText.innerText = `You:  ${msg}`;
+        }
+        
         newMessage.appendChild(messageText);
         document.querySelector(".chat-messages").appendChild(newMessage);
-        const groupId = localStorage.getItem("groupId")
-        ? localStorage.getItem("groupId")
-        :1 
+        
 
-        await axios.post(`http://localhost:3000/message/tostore/${groupId}`,{msg},{ headers: { Authorization: token }})
+        
     }
     catch(err){
         console.log(err)
@@ -87,22 +101,23 @@ async function localmessages(){
             console.log(beforedata);
             let groupId = localStorage.getItem("groupId")
             ? localStorage.getItem("groupId")
-            : 0
+            : 1
 
             let lastmsgid
             if(beforedata.length !== 0){
                 lastmsgid = beforedata[beforedata.length-1].id
-                console.log(lastmsgid);
+                console.log(lastmsgid,'lastmsgid');
             }else{
                 lastmsgid=-1;
             }
             const localmsgs = await axios.get(`http://localhost:3000/message/localmsg?id=${lastmsgid}&groupId=${groupId}`)
-            console.log(localmsgs.data.message);
+            //console.log(localmsgs.data.message,'local');
+
             let samedata = localmsgs.data.message
 
-            if((beforedata.length !==0) && (beforedata[beforedata.length-1].id === samedata[samedata.length-1].id)){
-                //console.log(beforedata[beforedata.length-1].id, samedata[samedata.length-1].id )
-                //console.log(beforedata[beforedata.length-1].id-1, samedata[samedata.length-1].id,beforedata.length,samedata.length )
+            if((beforedata.length !==0) && (samedata.length !== 0) &&(beforedata[beforedata.length-1].id === samedata[samedata.length-1].id)){
+                console.log(beforedata[beforedata.length-1].id, samedata[samedata.length-1].id )
+                console.log(beforedata[beforedata.length-1].id-1, samedata[samedata.length-1].id,beforedata.length,samedata.length )
                 let datalocal =JSON.parse(localStorage.getItem('data'))
                 return showMessages(datalocal);
             }
@@ -119,7 +134,7 @@ async function localmessages(){
                     }
                     return false;
                 })
-                console.log(alllocalmessages)
+                //console.log(alllocalmessages)
             }
             if(alllocalmessages.length>10){
                 const msgsafterdel =alllocalmessages.slice(alllocalmessages.length-10,alllocalmessages.length)
@@ -153,14 +168,30 @@ async function showMessages(msgs){
                 newMessage.classList.add("message-container-left");
                 let messageText = document.createElement("p");
                 messageText.classList.add("message-text");
-                messageText.innerText = `${userName}:  ${msgText}`;
+                if(msgText.startsWith("http://localhost:3000/group/groupid/")){
+                    const url = msgText;
+                    const lastSlashIndex = url.lastIndexOf('/');
+                    const groupId = url.substring(lastSlashIndex + 1);
+                    messageText.innerHTML = `${userName}:  <a href="#" onclick="linkclicked(${groupId})">Join link</a>`; 
+                }else{
+                    messageText.innerText = `${userName}:  ${msgText}`;
+                }
+                
                 newMessage.appendChild(messageText);
                 document.querySelector(".chat-messages").appendChild(newMessage);
             }else{
                 newMessage.classList.add("message-container-right");
                 let messageText = document.createElement("p");
                 messageText.classList.add("message-text");
-                messageText.innerText = `You :  ${msgText}`;
+                if(msgText.startsWith("http://localhost:3000/group/groupid/")){
+                    const url = msgText;
+                    const lastSlashIndex = url.lastIndexOf('/');
+                    const groupId = url.substring(lastSlashIndex + 1);
+                    messageText.innerHTML = `You:  <a href="#" onclick="linkclicked(${groupId})">Join link</a>`; 
+                }else{
+                    messageText.innerText = `You :  ${msgText}`;
+                }
+                
                 newMessage.appendChild(messageText);
                 document.querySelector(".chat-messages").appendChild(newMessage);
             }
@@ -190,28 +221,33 @@ async function creategroup(){
     }
 }
 function groupUI(data){
-    console.log(data)
-    data = data.message;
     //console.log(data)
+    data = Array.from(data.message)
+    
+    console.log(data)
     const parentelement = document.getElementById('group-list');
-    data.forEach((item)=>{
-        let li= document.createElement('li')
-        let groupText = document.createElement("div");
-        groupText.classList.add("group-text");
-        groupText.id = `${item.id}`
-        groupText.textContent = `${item.GroupName}`;
-        groupText.addEventListener("click", () => switchGroup(item.id));
-        li.appendChild(groupText);
-        parentelement.appendChild(li)
-
-        let inviteLink = document.createElement("p")
-        inviteLink.innerHTML = `<a href="http://localhost:3000/group/groupid/${item.id}">Invite</a>`
-        inviteLink.className = 'invite'
-        //inviteLink.textContent = "Invite"
-        inviteLink.addEventListener('click',()=> linkclicked(item.id,item.GroupName))
-        li.appendChild(inviteLink)  
-        parentelement.appendChild(li)
-    })
+    if (Array.isArray(data)){
+        data.forEach((item)=>{
+            let li= document.createElement('li')
+            let groupText = document.createElement("div");
+            groupText.classList.add("group-text");
+            groupText.id = `${item.id}`
+            groupText.textContent = `${item.GroupName}`;
+            groupText.addEventListener("click", () => switchGroup(item.id));
+            li.appendChild(groupText);
+    
+            let inviteLink = document.createElement("p")
+            inviteLink.innerHTML = `<a href="http://localhost:3000/group/groupid/${item.id}">Invite</a>`
+            inviteLink.className = 'invite'
+            //inviteLink.textContent = "Invite"
+            inviteLink.addEventListener('click',()=> linkclicked(item.id,item.GroupName))
+            li.appendChild(inviteLink)  
+            parentelement.appendChild(li)
+        })
+    }else{
+        console.log('it is not an array');
+    }
+    
 }
 async function linkclicked(id){
     try{
@@ -236,6 +272,7 @@ async function allgroups(){
     try{
         const newgroupRes= await axios.get("http://localhost:3000/group/allgroups")
         groupUI(newgroupRes.data)
+        //console.log(newgroupRes.data)
     }
     catch(err){
         console.log(err)

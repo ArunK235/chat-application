@@ -6,18 +6,12 @@ module.exports.creategroup =async (req,res)=>{
     try{
         const data =req.body
         const userId = req.user.id
-        //console.log(data.groupname)
-        const addCommonGroup = await group.findOrCreate({
-            where: { Groupname: 'common' }   
-        }).then((result) => {
-            return result;
-        })
-        console.log(addCommonGroup)
-
+        console.log(data.groupname)
         const grouptable = await group.create({
             Groupname:data.groupname,
             userId:userId
         })
+        
         await req.user.addGroup(grouptable)
         return res.status(201).json({success:true,message:grouptable})
     }
@@ -50,7 +44,7 @@ module.exports.groupcheck= async(req,res)=>{
     try{
         const groupId = req.params.id
         const userId = req.user.id
-        console.log(groupId,userId)
+        //console.log(groupId,userId)
         return res.status(201).json({success:true})
     }
     catch(err){

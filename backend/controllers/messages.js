@@ -7,14 +7,14 @@ module.exports.addMessage= async (req,res,next)=>{
         const userId = req.user.id;
         const {msg} = req.body;
         const groupId = Number(req.params.id)
-        console.log(req.params.id,'group id here')
+        //console.log(req.params.id,'group id here')
         //console.log(userId,msg,'real');
         const  result =await Messages.create({
             messages:msg,
             userId:userId,
             groupId:groupId
         })
-        console.log(result);
+        //console.log(result);
         return res.status(200).json({success:true,message:'message successfully stored'})
     }
     catch(err){
@@ -44,7 +44,7 @@ module.exports.getAllMessages= async(req,res)=>{
     try{
         const groupId = req.query.groupId
         const skipnumber = Number(req.query.id)
-        //console.log(skipnumber,'skipnumber')
+        console.log(skipnumber,'skipnumber')
         if(skipnumber >= 10){
             const skip= skipnumber-10
             let offset = skip
