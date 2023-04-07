@@ -6,7 +6,7 @@ const authenticatemsg = require('../middlewares/auth');
 
 router.post('/tostore/:id',authenticatemsg.Authenticate, messagecontroller.addMessage);
 
-router.get('/toget',messagecontroller.getMessages);
+router.get('/toget/:id',authenticatemsg.Authenticate,messagecontroller.getMessages);
 
 router.get('/localmsg',messagecontroller.getAllMessages);
 

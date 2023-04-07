@@ -7,14 +7,14 @@ module.exports.addMessage= async (req,res,next)=>{
         const userId = req.user.id;
         const {msg} = req.body;
         const groupId = Number(req.params.id)
-        //console.log(req.params.id,'group id here')
-        //console.log(userId,msg,'real');
+        console.log(req.params.id,'group id here')
+        console.log(userId,msg,'real');
         const  result =await Messages.create({
             messages:msg,
             userId:userId,
             groupId:groupId
         })
-        //console.log(result);
+        console.log(result);
         return res.status(200).json({success:true,message:'message successfully stored'})
     }
     catch(err){
@@ -24,9 +24,9 @@ module.exports.addMessage= async (req,res,next)=>{
 }
 module.exports.getMessages = async(req,res)=>{
     try{
-        
+        const groupId = req.params.id
         const allMessages = await Messages.findAll({
-            attributes: ['messages'],
+            where:{groupId:groupId},attributes: ['id','messages'],
             include: [{
                 model: User,
                 attributes: ['name'] 
@@ -43,8 +43,10 @@ module.exports.getMessages = async(req,res)=>{
 module.exports.getAllMessages= async(req,res)=>{
     try{
         const groupId = req.query.groupId
+        console.log(groupId,'group') //here iam getting null
         const skipnumber = Number(req.query.id)
-        console.log(skipnumber,'skipnumber')
+        console.log(skipnumber,'skip')
+        console.log(groupId)
         if(skipnumber >= 10){
             const skip= skipnumber-10
             let offset = skip

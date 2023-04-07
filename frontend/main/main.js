@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', async()=>{
     try{
         const userName = localStorage.getItem('username')
         userJoined(userName)
-        /*if(!getallclicks){
+        if(!getallclicks){
             setInterval(() => {
                 localmessages();
             }, 5000);
-        }*/
-        localmessages() 
+        }
+        //localmessages() 
         allgroups()  
     }
     catch(err){
@@ -50,9 +50,8 @@ async function chatButton(){
         let msg = textArea.value;
         textArea.value = ''
 
-        const groupId = localStorage.getItem("groupId")
-        ? localStorage.getItem("groupId")
-        :1 
+        const groupId = localStorage.getItem("groupId") ? localStorage.getItem("groupId") : 1;
+    
 
         //const userName = localStorage.getItem('username')
         let newMessage = document.createElement("div");
@@ -85,7 +84,9 @@ async function chatButton(){
 async function getAll(){
     try{
         getallclicks = true;
-        const allmessages = await axios.get('http://localhost:3000/message/toget');
+        const groupId = localStorage.getItem('groupId')
+        //console.log(groupId)
+        const allmessages = await axios.get(`http://localhost:3000/message/toget/${groupId}`)
         //console.log(allmessages.data.message)
         const msgs = allmessages.data.message
         showMessages(msgs)
@@ -94,11 +95,14 @@ async function getAll(){
         console.log(err);
     }
 }
+
+let latestmessageId = localStorage.getItem("latestmessageId")||0;
+
 async function localmessages(){
     if(!getallclicks){
         try{
-            let beforedata = JSON.parse(localStorage.getItem('data')) ||[];
-            console.log(beforedata);
+            /*let beforedata = JSON.parse(localStorage.getItem('data')) ||[];
+            //console.log(beforedata);
             let groupId = localStorage.getItem("groupId")
             ? localStorage.getItem("groupId")
             : 1
@@ -109,15 +113,31 @@ async function localmessages(){
                 console.log(lastmsgid,'lastmsgid');
             }else{
                 lastmsgid=-1;
-            }
-            const localmsgs = await axios.get(`http://localhost:3000/message/localmsg?id=${lastmsgid}&groupId=${groupId}`)
-            //console.log(localmsgs.data.message,'local');
+            }*/
+            let groupId = localStorage.getItem('groupId');
+            console.log(groupId, 'groupid')
+            const localmsgs = await axios.get(`http://localhost:3000/message/localmsg?groupId=${groupId}&latestdId=${latestmessageId}`)
+            console.log(localmsgs.data.message,'local');
 
-            let samedata = localmsgs.data.message
+            let Msgs = localmsgs.data.message;
+            let currentMesgs= JSON.parse(localStorage.getItem('Msgs')) ||[];
+            for(let i=0; i < Msgs.length;i++){
+                if(Msgs[i].id >latestmessageId){
+                    currentMesgs.push(Msgs[i]);
+                    latestmessageId= Msgs[i].id;
+                }
+            }
+            currentMesgs = currentMesgs.slice(-10);
+            localStorage.setItem('Msgs',JSON.stringify(currentMesgs));
+            let info = JSON.parse(localStorage.getItem('Msgs'));
+            console.log(info,'info')
+            showMessages(info);
+
+            /*let samedata = localmsgs.data.message
 
             if((beforedata.length !==0) && (samedata.length !== 0) &&(beforedata[beforedata.length-1].id === samedata[samedata.length-1].id)){
-                console.log(beforedata[beforedata.length-1].id, samedata[samedata.length-1].id )
-                console.log(beforedata[beforedata.length-1].id-1, samedata[samedata.length-1].id,beforedata.length,samedata.length )
+                //console.log(beforedata[beforedata.length-1].id, samedata[samedata.length-1].id )
+                //console.log(beforedata[beforedata.length-1].id-1, samedata[samedata.length-1].id,beforedata.length,samedata.length )
                 let datalocal =JSON.parse(localStorage.getItem('data'))
                 return showMessages(datalocal);
             }
@@ -144,7 +164,7 @@ async function localmessages(){
             }
             let datalocal = JSON.parse(localStorage.getItem('data'))
             console.log(datalocal)
-            showMessages(datalocal);
+            showMessages(datalocal);*/
 
         }
         catch(err){
@@ -171,6 +191,7 @@ async function showMessages(msgs){
                 if(msgText.startsWith("http://localhost:3000/group/groupid/")){
                     const url = msgText;
                     const lastSlashIndex = url.lastIndexOf('/');
+                    console.log(lastSlashIndex);
                     const groupId = url.substring(lastSlashIndex + 1);
                     messageText.innerHTML = `${userName}:  <a href="#" onclick="linkclicked(${groupId})">Join link</a>`; 
                 }else{
@@ -223,8 +244,6 @@ async function creategroup(){
 function groupUI(data){
     //console.log(data)
     data = Array.from(data.message)
-    
-    console.log(data)
     const parentelement = document.getElementById('group-list');
     if (Array.isArray(data)){
         data.forEach((item)=>{
@@ -252,17 +271,25 @@ function groupUI(data){
 async function linkclicked(id){
     try{
         console.log(id,'clicked on the group link');
+        alert('Are you sure to join in this group')
+        const usercheckingroupornot = await axios.get(`http://localhost:3000/group/toadduser?groupId=${id}`)
+        console.log(usercheckingroupornot.status)
+        if(usercheckingroupornot === 200){
+            alert('you are already in the group')
+        }
+        alert('successfully joined the group')
     }
     catch(err){
         console.log(err);
     }
 }
-async function switchGroup(id){
+function switchGroup(id){
     try{
         console.log(id,'switching to group')
-        localStorage.removeItem('data')
+        localStorage.removeItem('Msgs');
         const groupId = localStorage.setItem("groupId",id)
-        await location.reload()
+        console.log(groupId);
+        location.reload()
     }
     catch(err){
         console.log(err)

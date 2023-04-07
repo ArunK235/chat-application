@@ -6,7 +6,14 @@ module.exports.creategroup =async (req,res)=>{
     try{
         const data =req.body
         const userId = req.user.id
-        console.log(data.groupname)
+        //console.log(data.groupname)
+        const addCommonGroup = await group.findOrCreate({
+            where: { Groupname: 'common' }   
+        }).then((result) => {
+            return result;
+        })
+        console.log(addCommonGroup)
+
         const grouptable = await group.create({
             Groupname:data.groupname,
             userId:userId
@@ -49,5 +56,24 @@ module.exports.groupcheck= async(req,res)=>{
     }
     catch(err){
         console.log(err)
+    }
+}
+module.exports.addusertogroup = async (req,res)=>{
+    try{
+        const groupId = req.query.groupId
+        const userId = req.user.id
+        console.log(groupId,userId)
+        const useringroupornot = await usergroup.findOne({where:{ groupId:groupId,userId:userId}})
+        if(!useringroupornot){
+            await usergroup.create({
+                userId:userId,
+                groupId:groupId
+            })
+            return res.status(201).json({success:true, message:'user created'})
+        }
+        return res.status(200).json({success:false,message: 'user already existed'})
+    }
+    catch(err){
+        console.log(err);
     }
 }
