@@ -62,18 +62,53 @@ module.exports.addusertogroup = async (req,res)=>{
     try{
         const groupId = req.query.groupId
         const userId = req.user.id
-        console.log(groupId,userId)
+        const email = req.user.userEmail
+        console.log(groupId,userId,email)
+        if(email){
+            console.log('entered in email block')
+            const userId1 = await User.findOne({where:{email:email},attributes:['id']})
+            console.log(userId1.id, 'user in inside ')
+            const id = userId1.id
+            const result = await usercheck(groupId,id)
+            if(result =='success'){
+                return res.status(201).json({success:true, message:'user created'})
+            }
+            else{
+                return res.status(200).json({success:true,message:'user exists'})
+            }
+        }
+        console.log('not entered in email block')
+        const result = await usercheck(groupId,userId)
+        if(result =='success'){
+            return res.status(201).json({success:true, message:'user created'})
+        }
+        else{
+            return res.status(200).json({success:true,message:'user exists'})
+        }
+        
+    }
+    catch(err){
+        console.log(err)
+        return res.status(500).json({success:false,message:'failed at userCheck function'})
+    }
+}
+
+async function usercheck(groupId,userId){
+    try{
+        console.log('entered user in check')
         const useringroupornot = await usergroup.findOne({where:{ groupId:groupId,userId:userId}})
         if(!useringroupornot){
             await usergroup.create({
                 userId:userId,
                 groupId:groupId
             })
-            return res.status(201).json({success:true, message:'user created'})
+            return success
         }
-        return res.status(200).json({success:false,message: 'user already existed'})
+        return false
     }
     catch(err){
-        console.log(err);
+        console.log(err)
+        return false;
     }
+    
 }

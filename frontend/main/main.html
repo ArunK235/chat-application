@@ -14,12 +14,40 @@
         </div>
         <div class="groups">
             <div>
-                <button id="public" onclick="switchGroup(1)">Common Room</button>
+                <button id="public" onclick="switchGroup(1,'common Room')">Common Room</button>
             </div>
             <h2>Your Groups</h2>
             <ul class="group-list" id="group-list"> 
             </ul>
             <button class="groupbtn" onclick="creategroup()">Create Group</button>
+            <div class="search">
+                <h2>Add User</h2>
+                <form onsubmit="addUserClicked(event)">
+                  <input type="text" placeholder="User Email" id="search">
+                  <button type="submit">Add</button>
+                </form>
+            </div>
+          
+            <div id="user-container">
+                <h2>Users</h2>
+                <ul class="user-list">
+                  <ul class="user-list li">
+                    <span>User 1</span>
+                    <button>Make Admin</button>
+                    <button>X</button>
+                  </ul>
+                  <ul class="user-list li">
+                    <span>User 2</span>
+                    <button>Make Admin</button>
+                    <button>X</button>
+                  </ul>
+                  <ul class="user-list li">
+                    <span>User 3</span>
+                    <button>Make Admin</button>
+                    <button>X</button>
+                  </ul>
+                </ul>
+            </div>
         </div>
         <div class="chat-headers">
             <h3 id="groupname">Common Room</h3>

@@ -252,7 +252,7 @@ function groupUI(data){
             groupText.classList.add("group-text");
             groupText.id = `${item.id}`
             groupText.textContent = `${item.GroupName}`;
-            groupText.addEventListener("click", () => switchGroup(item.id));
+            groupText.addEventListener("click", () => switchGroup(item.id,item.GroupName));
             li.appendChild(groupText);
     
             let inviteLink = document.createElement("p")
@@ -277,7 +277,10 @@ async function linkclicked(id){
         if(usercheckingroupornot === 200){
             alert('you are already in the group')
         }
-        alert('successfully joined the group')
+        else{
+            alert('successfully joined the group')
+        }
+        
     }
     catch(err){
         console.log(err);
