@@ -12,8 +12,10 @@ const groupdata = sequelize.define('group',{
     Groupname:{
         type:Sequelize.STRING,
         allowNull:false,
-        
-    
+    },
+    isAdmin:{
+        type:Sequelize.BOOLEAN,
+        allowNull:false
     }
 })
 module.exports=groupdata
